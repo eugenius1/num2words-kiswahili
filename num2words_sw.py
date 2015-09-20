@@ -51,7 +51,9 @@ class Number:
 				if hundredr:
 					ten = hundredr//10
 					one = hundredr%10
-					word += mamia[hundred] +' na '+ makumi[ten]
+					word += mamia[hundred]
+					if ten:
+						word += ' na '+ makumi[ten]
 					if one:
 						word+=' na '+mamoja[one]
 				else:
@@ -125,7 +127,7 @@ class Number:
 			self.number = int(number_ls[0])
 		except:
 			pass
-		if self.number < 0:
+		if number_ls[0][0] == '-':
 			self.number = -self.number
 			word += 'hasi '
 		if self.number==0:
