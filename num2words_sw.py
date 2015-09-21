@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__  = (
-	'Machaku Banga',
+	'Machaku Banga', 'Eusebius Ngemera',
 	)
 __license__ = 'Apache License, 2.0 (Apache-2.0)'
 __version__ = '2012.03.16'
@@ -9,7 +9,7 @@ __version__ = '2012.03.16'
 import sys
 import re
 
-mamoja=['','moja','mbili','tatu','nne','tano','sita','saba','nane','tisa']
+mamoja=['sifuri','moja','mbili','tatu','nne','tano','sita','saba','nane','tisa']
 makumi=['','kumi','ishirini','thelathini','arobaini','hamsini','sitini','sabini','themanini','tisini']
 mamia=['','mia moja','mia mbili','mia tatu','mia nne','mia tano','mia sita','mia saba','mia nane','mia tisa']
 cheo=['','elfu','milioni','bilioni','trilioni','kuadrilioni','kuintilioni','seksitilioni','septilioni','oktilioni','nonilioni','desilioni','anidesilioni','dodesilioni','tradesilioni','kuatuordesilion','kuindesilioni','seksidesilioni','septendesilioni','oktodesilioni','novemdesilioni','vijintilioni']
@@ -26,7 +26,7 @@ class Number:
 			except TypeError:
 				return "Kosa. Hujaingiza inteja."
 		
-	def get_order(self,number):
+	def get_order(self,number):   # optimise
 		order = 0
 		while number >= 1000:
 			order += 1
@@ -39,7 +39,7 @@ class Number:
 		remainder = number%pow(10,3*order)
 		return remainder
 		
-	def convert_to_words_hundreds(self,number):
+	def convert_to_words_hundreds(self,number):		# duplicate code here!
 		word = ''
 		if number < 0:
 			number -= number
@@ -48,16 +48,15 @@ class Number:
 			if number >= 100:
 				hundred = number//100
 				hundredr = number%100
+				word += mamia[hundred]
 				if hundredr:
 					ten = hundredr//10
 					one = hundredr%10
-					word += mamia[hundred]
 					if ten:
 						word += ' na '+ makumi[ten]
 					if one:
 						word+=' na '+mamoja[one]
-				else:
-					word += mamia[hundred]
+				
 			if 100> number >= 10:
 				ten = number//10
 				one = number%10
@@ -69,7 +68,7 @@ class Number:
 				
 		return word
 		
-	def convert_to_words_order(self,number):
+	def convert_to_words_order(self,number):	# merge with _r to single proc
 		word =''
 		order = self.get_order(number)
 		hundred = number//pow(10,3*order)
@@ -82,7 +81,7 @@ class Number:
 			return word
 		return cheo[order]+' '+self.convert_to_words_hundreds(hundred)
 		
-	def convert_to_words_order_r(self,number):
+	def convert_to_words_order_r(self,number):    # r for reverse
 		word =''
 		order = self.get_order(number)
 		hundred = number//pow(10,3*order)
@@ -100,39 +99,34 @@ class Number:
 		word_l=[]
 		digits=list(snumber)
 		for i in digits:
-			if int(i)==0:
-				word_l.append('sifuri')
-			else:
-				word_l.append(mamoja[int(i)])
+			word_l.append(mamoja[int(i)])
 		word=' '.join(word_l)
 		return word
 	
-	def get_fraction_digits(self,integer=False):
-		number_s=str(self.number)
+	def get_fraction_digits(self,integer=False):	# better
 		try:
-			number_ls = re.split('[.]',number_s)
-			digits = number_ls[1]
-			if integer:
+			digits =  self.number - self.number//1
+			digits = str(digits)[2:]
+			if integer and digits !='0':
 				digits = int(digits)
 		except:
 			digits = False
 		return digits
 	
-	def convert_to_words(self):
+	def convert_to_words(self):		# exp format not fully supported
 		word=''
 		fraction = self.get_fraction_digits()
+		print '.', fraction
 		try:
 			number_s=str(self.number)
-			number_ls = re.split('[.]',number_s)
-			self.number = int(number_ls[0])
+			number = int(self.number//1)
+			print self.number
 		except:
 			pass
-		if number_ls[0][0] == '-':
+		if number < 0: #number_ls[0][0] == '-':
 			self.number = -self.number
 			word += 'hasi '
-		if self.number==0:
-			word += 'sifuri'
-		number = self.number
+		#number = self.number
 		if number < 1000:
 			word += self.convert_to_words_hundreds(number)
 		else:
@@ -164,13 +158,27 @@ class Number:
 			word+= ' nukta '+self.convert_to_digits(fraction)
 		return word
 
+def convert_and_print(a):
+	try:
+		no = Number(int(a))
+	except ValueError:
+		try:
+			no = Number(float(a))
+		except ValueError:
+			return
+	print (no.convert_to_words())
+
 if __name__ == "__main__":
 	try:
-		for i in range(1,len(sys.argv)):
-			try:
-				no = Number(int(sys.argv[i]))
-			except ValueError:
-				no = Number(float(sys.argv[i]))
-			print (no.convert_to_words())
+		if len(sys.argv) >1:
+			for i in range(1,len(sys.argv)):
+				convert_and_print(sys.argv[i])
+		else:
+			while 1:
+				no = raw_input()
+				if no == '':
+					break
+				convert_and_print(no)
 	except KeyError:
 		pass
+	
