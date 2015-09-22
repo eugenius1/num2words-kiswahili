@@ -118,7 +118,7 @@ class Number:
 			digits = False
 		return digits
 		
-	def convert_to_words(self):		# exp format and floats not fully supported
+	def convert_to_words(self):
 		if self.number == None:
 			return None
 		word=''
