@@ -8,7 +8,6 @@ __version__ = '2012.03.16'
 
 import sys
 import re
-import test
 
 mamoja=['sifuri','moja','mbili','tatu','nne','tano','sita','saba','nane','tisa']
 makumi=['','kumi','ishirini','thelathini','arobaini','hamsini','sitini','sabini','themanini','tisini']
@@ -34,7 +33,7 @@ class Number:
 			print "Kosa. Hujaingiza namba."
 			self.number = None
 		
-	def get_order(self,number):   # optimise
+	def get_order(self,number):
 		order = 0
 		while number >= 1000:
 			order += 1
@@ -47,7 +46,7 @@ class Number:
 		remainder = number%pow(10,3*order)
 		return remainder
 		
-	def convert_to_words_hundreds(self,number):		# duplicate code here!
+	def convert_to_words_hundreds(self,number):
 		word = ''
 		if number <1000:
 			if number >= 100:
@@ -73,7 +72,7 @@ class Number:
 				
 		return word
 		
-	def convert_to_words_order(self,number):	# merge with _r to single proc
+	def convert_to_words_order(self,number):
 		word =''
 		order = self.get_order(number)
 		hundred = number//pow(10,3*order)
@@ -86,7 +85,7 @@ class Number:
 			return word
 		return cheo[order]+' '+self.convert_to_words_hundreds(hundred)
 		
-	def convert_to_words_order_r(self,number):    # r for reverse
+	def convert_to_words_order_r(self,number):    # reverse
 		word =''
 		order = self.get_order(number)
 		hundred = number//pow(10,3*order)
@@ -108,7 +107,7 @@ class Number:
 		word=' '.join(word_l)
 		return word
 	
-	def get_fraction_digits(self,integer=False):	# better fraction check
+	def get_fraction_digits(self,integer=False):
 		if isinstance(self.number, int) or (isinstance(self.number, float) and self.number.is_integer()):
 			return False
 		number_s=str(self.number)
@@ -159,16 +158,8 @@ class Number:
 
 if __name__ == "__main__":
 	try:
-		if len(sys.argv) >1:
-			for i in range(1,len(sys.argv)):
-				print Number(sys.argv[i]).convert_to_words()
-		else:
-			test.test()		# for testing purposes
-			while 1:
-				num_s = raw_input()
-				if num_s == '':
-					break
-				print Number(num_s).convert_to_words()
+		for i in range(1,len(sys.argv)):
+			print Number(sys.argv[i]).convert_to_words()
 	except KeyError:
 		pass
 	
