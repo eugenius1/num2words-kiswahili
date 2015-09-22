@@ -109,7 +109,7 @@ class Number:
 		return word
 	
 	def get_fraction_digits(self,integer=False):	# better fraction check
-		if isinstance(self.number, int) or (isinstance(self.number, float) and self.number.is_integer()):
+		if isinstance(self.number, int):
 			return False
 		number_s=str(self.number)
 		try:
@@ -124,9 +124,9 @@ class Number:
 			return None
 		word=''
 		fraction = self.get_fraction_digits()
-		number = abs(int(self.number))
 		if self.number < 0:
 			word += 'hasi '
+		number = abs(int(self.number))
 		if number < 1000:
 			word += self.convert_to_words_hundreds(number)
 		else:
