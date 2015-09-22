@@ -8,7 +8,6 @@ __version__ = '2012.03.16'
 
 import sys
 import re
-from decimal import *
 import test
 
 mamoja=['sifuri','moja','mbili','tatu','nne','tano','sita','saba','nane','tisa']
