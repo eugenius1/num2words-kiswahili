@@ -8,6 +8,8 @@ __version__ = '2012.03.16'
 
 import sys
 import re
+from decimal import *
+import test
 
 mamoja=['sifuri','moja','mbili','tatu','nne','tano','sita','saba','nane','tisa']
 makumi=['','kumi','ishirini','thelathini','arobaini','hamsini','sitini','sabini','themanini','tisini']
@@ -17,14 +19,18 @@ cheo=['','elfu','milioni','bilioni','trilioni','kuadrilioni','kuintilioni','seks
 class Number:
 	
 	def __init__(self,number):
-		self.number = number
-		if self.number is None:
-			return ''
-		else:
-			try:
-				int(self.number)
-			except TypeError:
-				return "Kosa. Hujaingiza inteja."
+		try:
+			float(number)
+			if isinstance(number, str):
+				try:
+					self.number = int(number)
+				except ValueError:
+					self.number = float(number)
+			else:
+				self.number = number
+		except ValueError:
+			print "Kosa. Hujaingiza namba."
+			self.number = None
 		
 	def get_order(self,number):   # optimise
 		order = 0
@@ -41,9 +47,6 @@ class Number:
 		
 	def convert_to_words_hundreds(self,number):		# duplicate code here!
 		word = ''
-		if number < 0:
-			number -= number
-			word += 'hasi '
 		if number <1000:
 			if number >= 100:
 				hundred = number//100
@@ -103,30 +106,25 @@ class Number:
 		word=' '.join(word_l)
 		return word
 	
-	def get_fraction_digits(self,integer=False):	# better
+	def get_fraction_digits(self,integer=False):	# better fraction check
+		if isinstance(self.number, int) or (isinstance(self.number, float) and self.number.is_integer()):
+			return False
+		number_s=str(self.number)
 		try:
-			digits =  self.number - self.number//1
-			digits = str(digits)[2:]
-			if integer and digits !='0':
-				digits = int(digits)
+			number_ls = re.split('[.]',number_s)
+			digits = number_ls[1]
 		except:
 			digits = False
 		return digits
-	
-	def convert_to_words(self):		# exp format not fully supported
+		
+	def convert_to_words(self):		# exp format and floats not fully supported
+		if self.number == None:
+			return None
 		word=''
 		fraction = self.get_fraction_digits()
-		print '.', fraction
-		try:
-			number_s=str(self.number)
-			number = int(self.number//1)
-			print self.number
-		except:
-			pass
-		if number < 0: #number_ls[0][0] == '-':
-			self.number = -self.number
+		number = abs(int(self.number))
+		if self.number < 0:
 			word += 'hasi '
-		#number = self.number
 		if number < 1000:
 			word += self.convert_to_words_hundreds(number)
 		else:
@@ -151,34 +149,24 @@ class Number:
 			else:
 				if terminator:
 					word = word[:-2]
-					#if number>9:
 					word+=terminator
 					word += self.convert_to_words_hundreds(number)
 		if fraction:
 			word+= ' nukta '+self.convert_to_digits(fraction)
 		return word
 
-def convert_and_print(a):
-	try:
-		no = Number(int(a))
-	except ValueError:
-		try:
-			no = Number(float(a))
-		except ValueError:
-			return
-	print (no.convert_to_words())
-
 if __name__ == "__main__":
 	try:
 		if len(sys.argv) >1:
 			for i in range(1,len(sys.argv)):
-				convert_and_print(sys.argv[i])
+				print Number(sys.argv[i]).convert_to_words()
 		else:
+			test.test()		# for testing purposes
 			while 1:
-				no = raw_input()
-				if no == '':
+				num_s = raw_input()
+				if num_s == '':
 					break
-				convert_and_print(no)
+				print Number(num_s).convert_to_words()
 	except KeyError:
 		pass
 	
