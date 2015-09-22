@@ -12,3 +12,6 @@ def test():
 		print n, res
 		if res and res[-1] == ' ':
 			print '^......Terminating space'
+
+if __name__ == "__main__":
+	test()
