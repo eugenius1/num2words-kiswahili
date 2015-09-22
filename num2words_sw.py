@@ -26,7 +26,10 @@ class Number:
 				except ValueError:
 					self.number = float(number)
 			else:
-				self.number = number
+				if (isinstance(number, float) and number.is_integer()):	# removes .0
+					self.number = int(number)
+				else:
+					self.number = number
 		except ValueError:
 			print "Kosa. Hujaingiza namba."
 			self.number = None
